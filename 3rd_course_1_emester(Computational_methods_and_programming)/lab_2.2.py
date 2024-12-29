@@ -22,7 +22,6 @@ B = np.matrix([
     [3 * np.sin(15)]
 ])
 
-# Создается матрица X, которая будет использоваться для хранения вектора решений.
 X = np.matrix([
     [0],
     [0],
@@ -31,58 +30,56 @@ X = np.matrix([
 ])
 
 # функция minor создает и возвращает минор матрицы A
-# путем ее копирования, удаления строки i и столбца j.
 def minor(A, i, j):
-    M = copy.deepcopy(A)  # делает копию матрицы
-    del M[i]  # удаляет i-тую строку
+    M = copy.deepcopy(A) 
+    del M[i]  
     for i in range(len(A[0]) - 1):
-        del M[i][j]  # удаляет по столбцу j-элемент
+        del M[i][j]  
     return M
 
 
 # Функция det вычисляет определитель матрицы A рекурсивно, используя миноры.
-def det(A):  # нахождение определителя
+def det(A):  
     m = len(A)
     n = len(A[0])
     if m != n:
         return None
     if n == 1:
         return A[0][0]
-    signum = 1  # флаг
-    determinant = 0  # изначальное значение детерм
+    signum = 1  
+    determinant = 0 
 
-    for j in range(n):  # нахождение детерм по формуле
+    for j in range(n): 
         determinant += A[0][j] * signum * det(minor(A, 0, j))
         signum *= -1
     return determinant
 
 # Функция trans выполняет транспонирование матрицы array,
-# то есть строки становятся столбцами и наоборот.
-def trans(array):  # транспонированная матрица
+def trans(array):  
     res = []
-    n = len(array)  # длина, ширина матрица
+    n = len(array) 
     m = len(array[0])
-    for j in range(m):  # идем по столбцам
-        tmp = []  # пустой массив
-        for i in range(n):  # идем по строкам
-            tmp = tmp + [array[i][j]]  # по элементно строка становится столбцом
-        res = res + [tmp]  # ответ, получаем
+    for j in range(m):  
+        tmp = [] 
+        for i in range(n):  
+            tmp = tmp + [array[i][j]]  
+        res = res + [tmp]  
     return res
 
 # Функция inverse вычисляет обратную матрицу A с использованием миноров и определителя.
-def inverse(A):  # нахождение обратной
+def inverse(A):  
     result = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-    for i in range(len(A)):  # по строкам
-        for j in range(len(A[0])):  # по строкам
-            tmp = minor(A, i, j)  # берется минор
-            if i + j % 2 == 1:  # если сумма строки и остаток от деления столбца на 2 нечетный то появляется минус, если четная то плюс
+    for i in range(len(A)):  
+        for j in range(len(A[0])): 
+            tmp = minor(A, i, j)  
+            if i + j % 2 == 1:  
                 result[i][j] = -1 * det(tmp) / det(A)
             else:
                 result[i][j] = 1 * det(tmp) / det(A)
     return result
 
 
-def print_matrix(A):  # вывод матрицы А
+def print_matrix(A): 
     for strA in A:
         print(strA)
 
@@ -90,8 +87,7 @@ def print_matrix(A):  # вывод матрицы А
 #  для нахождения вектора решения системы уравнений с заданной точностью epsil.
 counter = 0
 while np.linalg.norm(A * X - B) > epsil:
-    r = A * X - B  # высчитываем направление невязки (вектор)
-    # высчитываем коэф. поправки вектора невязки
+    r = A * X - B  
     t = np.dot((A * r).transpose(), r) / (np.linalg.norm(A * r) ** 2)
     X = X - float(t) * r
     counter += 1
@@ -105,7 +101,7 @@ print('Вектор решения с точностью ', epsil, ': \n', X)
 print('----------------------------------------')
 print('Количество итераций: ', counter)
 print("-----Направление невязки (вектора)------")
-print(A*X-B) # высчитываем направление невязки (вектор)
+print(A*X-B) 
 print('----------------------------------------')
 print('Определитель матрицы: ', det(A))
 P = trans(A)
